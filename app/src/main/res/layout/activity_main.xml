@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/tv_async_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="AsyncInvoke1"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/tv_async_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="AsyncInvoke2"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/tv_suspend_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SuspendInvoke1"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/tv_suspend_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SuspendInvoke2"
+        android:textAllCaps="false"
+        />
+
+</LinearLayout>
