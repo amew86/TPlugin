@@ -80,6 +80,7 @@ class TPluginProcessor : AbstractProcessor() {
             element.enclosedElements?.forEach functionForEach@{ functionElement ->
                 val functionAnnotation = functionElement.getAnnotation(TFunc::class.java) ?: return@functionForEach
                 val (funName, realFun, isAsync) = convertFunctionWithParameter(functionElement, functionAnnotation)
+                val timeout = functionAnnotation.timeout
                 if (isAsync) {
                     asyncStringBuilder.append("\"$funName\" -> plugin.$realFun\r")
 
@@ -95,7 +96,7 @@ class TPluginProcessor : AbstractProcessor() {
                                 latch.countDown()
                                 throw it ?: Exception("unknown exception")
                             })
-                            latch.await()
+                            ${if (timeout <= 0) "latch.await()" else "latch.await(${timeout}L, java.util.concurrent.TimeUnit.MILLISECONDS)"}
                             result
                         }
                         
@@ -115,18 +116,20 @@ class TPluginProcessor : AbstractProcessor() {
                         
                     """.trimIndent()
                     )
+
+                    syncStringBuilder.append("\"$funName\" -> plugin.$realFun\r")
                 }
             }
             asyncStringBuilder.append(
                 """
-                else -> failureCallback?.invoke(IllegalArgumentException("unknown funName"))//unfinished
+                else -> failureCallback?.invoke(IllegalArgumentException("unknown funName"))
                     
                 }
             """.trimIndent()
             )
             syncStringBuilder.append(
                 """
-                else -> throw IllegalArgumentException("unknown funName ")//unfinished
+                else -> throw IllegalArgumentException("unknown funName")
                 }
             """.trimIndent()
             )

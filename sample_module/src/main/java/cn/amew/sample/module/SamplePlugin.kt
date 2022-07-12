@@ -45,4 +45,29 @@ class SamplePlugin : ITPlugin {
             failureCallback?.invoke(IllegalArgumentException("unknown params"))
         }
     }
+
+    @TFunc
+    fun suspendTest1(
+        params: Map<String, Any?>?,
+    ): Map<String, Any?> {
+
+        Thread.sleep(1000L)
+        if (params?.get("input") == "test") {
+            return hashMapOf(
+                "result" to "overtime"
+            )
+        } else {
+            throw IllegalArgumentException("unknown params")
+        }
+    }
+
+    @TFunc
+    fun suspendTest2(
+        params: Map<String, Any?>?,
+    ): Map<String, Any?> {
+        Thread.sleep(2000L)
+        return hashMapOf(
+            "result" to "overtime"
+        )
+    }
 }

@@ -1,10 +1,17 @@
 package cn.amew.tplugin
 
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import cn.amew.tplugin.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 /**
  * Author:      A-mew
@@ -22,26 +29,25 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        binding.tvAsync1.setOnClickListener {
-            PluginRouter.asyncInvoke(
-                lifecycleOwner = null,
-                pluginName = "sample",
-                funName = "myFunName",
-                params = hashMapOf(
+        binding.tvAsync1.setOnClickListener { view ->
+            PluginRouter.asyncInvoke(null,"sample", "myFunName",
+                hashMapOf(
                     "input" to "test"
                 ),
-                successCallback = {
+                {
                     it?.entries?.forEach { entry ->
                         Log.i("test", "key: ${entry.key}, value: ${entry.value}")
                     }
+                    view.setBackgroundColor(Color.GREEN)
                 },
-                failureCallback = {
+                {
                     it?.printStackTrace()
+                    view.setBackgroundColor(Color.RED)
                 }
             )
         }
 
-        binding.tvAsync2.setOnClickListener {
+        binding.tvAsync2.setOnClickListener { view ->
             PluginRouter.asyncInvoke(
                 lifecycleOwner = null,
                 pluginName = "sample",
@@ -53,11 +59,67 @@ class MainActivity : AppCompatActivity() {
                     it?.entries?.forEach { entry ->
                         Log.i("test", "key: ${entry.key}, value: ${entry.value}")
                     }
+                    view.setBackgroundColor(Color.GREEN)
                 },
                 failureCallback = {
                     it?.printStackTrace()
+                    view.setBackgroundColor(Color.RED)
                 }
             )
+        }
+
+        binding.tvSuspend1.setOnClickListener { view ->
+            lifecycleScope.launch {
+                flow {
+                    val result = PluginRouter.syncInvoke(
+                        lifecycleOwner = null,
+                        "sample",
+                        "suspendTest1",
+                        hashMapOf(
+                            "input" to "test"
+                        )
+                    )
+                    emit(result)
+                }
+                    .flowOn(Dispatchers.IO)
+                    .catch {
+                        it.printStackTrace()
+                        view.setBackgroundColor(Color.RED)
+                    }
+                    .collect {
+                        it?.entries?.forEach { entry ->
+                            Log.i("test", "key: ${entry.key}, value: ${entry.value}")
+                        }
+                        view.setBackgroundColor(Color.GREEN)
+                    }
+
+            }
+        }
+
+        binding.tvSuspend2.setOnClickListener { view ->
+            lifecycleScope.launch {
+                flow {
+                    val result = PluginRouter.syncInvoke(
+                        lifecycleOwner = null,
+                        "sample",
+                        "suspendTest2",
+                        null
+                    )
+                    emit(result)
+                }
+                    .flowOn(Dispatchers.IO)
+                    .catch {
+                        it.printStackTrace()
+                        view.setBackgroundColor(Color.RED)
+                    }
+                    .collect {
+                        it?.entries?.forEach { entry ->
+                            Log.i("test", "key: ${entry.key}, value: ${entry.value}")
+                        }
+                        view.setBackgroundColor(Color.GREEN)
+                    }
+
+            }
         }
     }
 }

@@ -9,4 +9,7 @@ package cn.amew.tplugin.annotation
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class TFunc(val funName: String = "")
+annotation class TFunc(
+    val funName: String = "",
+    val timeout: Long = -1L
+)

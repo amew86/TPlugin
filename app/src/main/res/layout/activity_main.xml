@@ -24,6 +24,22 @@
         />
 
     <Button
+        android:id="@+id/tv_sync_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SyncInvoke1"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/tv_sync_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SyncInvoke2"
+        android:textAllCaps="false"
+        />
+
+    <Button
         android:id="@+id/tv_suspend_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
