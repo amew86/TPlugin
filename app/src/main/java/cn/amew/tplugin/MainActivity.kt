@@ -15,7 +15,7 @@ import cn.amew.tplugin.databinding.ActivityMainBinding
  */
 class MainActivity : AppCompatActivity() {
 
-    private val binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+    private val binding by lazy { ActivityMainBinding.inflate(LayoutInflater.from(this)) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +27,25 @@ class MainActivity : AppCompatActivity() {
                 lifecycleOwner = null,
                 pluginName = "sample",
                 funName = "myFunName",
+                params = hashMapOf(
+                    "input" to "test"
+                ),
+                successCallback = {
+                    it?.entries?.forEach { entry ->
+                        Log.i("test", "key: ${entry.key}, value: ${entry.value}")
+                    }
+                },
+                failureCallback = {
+                    it?.printStackTrace()
+                }
+            )
+        }
+
+        binding.tvAsync2.setOnClickListener {
+            PluginRouter.asyncInvoke(
+                lifecycleOwner = null,
+                pluginName = "sample",
+                funName = "syncTest1",
                 params = hashMapOf(
                     "input" to "test"
                 ),

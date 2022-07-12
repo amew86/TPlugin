@@ -6,6 +6,7 @@ import cn.amew.tplugin.annotation.TFunc
 import cn.amew.tplugin.annotation.TPlugin
 import cn.amew.tplugin.protocol.ITPlugin
 import com.google.auto.service.AutoService
+import java.lang.IllegalArgumentException
 
 /**
  * Author:      A-mew
@@ -24,7 +25,7 @@ class SamplePlugin : ITPlugin {
         params?.entries?.forEach {
             resultMap[it.key] = it.value
         }
-        resultMap["sync"] = "testSuccess"
+        resultMap["result"] = "success result for syncTest1"
         return resultMap
     }
 
@@ -36,5 +37,12 @@ class SamplePlugin : ITPlugin {
         failureCallback: ((Exception?) -> Unit)?
     ) {
         Log.i("test", "asyncTest")
+        if (params?.get("input") == "test") {
+            successCallback?.invoke(hashMapOf(
+                "result" to "success result for asyncTest1"
+            ))
+        } else {
+            failureCallback?.invoke(IllegalArgumentException("unknown params"))
+        }
     }
 }
