@@ -1,11 +1,12 @@
 package cn.amew.tplugin.processor
 
 import cn.amew.tplugin.annotation.TPlugin
+import cn.amew.tplugin.protocol.ITPlugin
+import cn.amew.tplugin.protocol.ITPluginWrapper
 import com.google.auto.service.AutoService
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import java.lang.reflect.Parameter
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
@@ -37,15 +38,95 @@ class TPluginProcessor : AbstractProcessor() {
             val pluginAnnotation = element.getAnnotation(TPlugin::class.java)
             val pluginName = pluginAnnotation.pluginName
 
+            // private lateinit var plugin: SamplePlugin
+            val pluginPropertySpec = PropertySpec.builder("plugin", ClassName.bestGuess(element.asType().toString()))
+                .addModifiers(KModifier.PRIVATE)
+                .addModifiers(KModifier.LATEINIT)
+                .mutable(true)
+                .build()
+
+            // override fun providePluginName() = "sample"
             val providePluginNameFunc = FunSpec.builder("providePluginName")
-//                .addModifiers(KModifier.OVERRIDE)
+                .addModifiers(KModifier.OVERRIDE)
                 .addCode("return \"$pluginName\"")
+                .build()
+
+            // override fun injectPlugin(plugin: ITPlugin) {
+            //     this.plugin = plugin as SamplePlugin
+            // }
+            val injectPluginFunc = FunSpec.builder("injectPlugin")
+                .addModifiers(KModifier.OVERRIDE)
+                .addParameter("plugin", ITPlugin::class.java)
+                .addCode("this.plugin = plugin as ${element.asType()}")
+                .build()
+
+//            @Throws(Exception::class)
+//            override fun syncInvoke(lifecycle: L?, funName: String, params: Map<String, Any?>?): Map<String, Any?>? {
+//
+//            }
+            val syncInvokeFunc = FunSpec.builder("syncInvoke")
+                .addModifiers(KModifier.OVERRIDE)
+                .addParameter("lifecycle", Class.forName("androidx.lifecycle.LifecycleOwner").asTypeName().copy(true))
+                .addParameter("funName", String::class)
+                .addParameter(
+                    "params",
+                    Map::class.asTypeName()
+                        .parameterizedBy(String::class.asTypeName(), Any::class.asTypeName().copy(true))
+                        .copy(true)
+                )
+                .returns(
+                    Map::class.asTypeName()
+                        .parameterizedBy(String::class.asTypeName(), Any::class.asTypeName().copy(true))
+                        .copy(true)
+                )
+                .addCode("return null")// TODO
+                .build()
+
+            val asyncInvokeFunc = FunSpec.builder("asyncInvoke")
+                .addModifiers(KModifier.OVERRIDE)
+                .addParameter("lifecycle", Class.forName("androidx.lifecycle.LifecycleOwner").asTypeName().copy(true))
+                .addParameter("funName", String::class)
+                .addParameter(
+                    "params",
+                    Map::class.asTypeName()
+                        .parameterizedBy(String::class.asTypeName(), Any::class.asTypeName().copy(true))
+                        .copy(true)
+                )
+                .addParameter(
+                    ParameterSpec.builder(
+                        "successCallback",
+                        Function1::class.asTypeName().parameterizedBy(
+                            Map::class.asTypeName()
+                                .parameterizedBy(String::class.asTypeName(), Any::class.asTypeName().copy(true))
+                                .copy(true),
+                            Unit::class.asTypeName()
+                        ).copy(true)
+                    ).build()
+                )
+                .addParameter(
+                    ParameterSpec.builder(
+                        "failureCallback",
+                        Function1::class.asTypeName().parameterizedBy(
+                            Exception::class.asTypeName(),
+                            Unit::class.asTypeName()
+                        ).copy(true)
+                    ).build()
+                )
                 .build()
 
             val typeSpec = TypeSpec.classBuilder(wrapperClassName)
                 .addKdoc("AUTO GENERATED, DO NOT MODIFY")
                 .addAnnotation(Class.forName("androidx.annotation.Keep"))
+                .addSuperinterface(
+                    ITPluginWrapper::class.asTypeName().parameterizedBy(
+                        Class.forName("androidx.lifecycle.LifecycleOwner").asTypeName()
+                    )
+                )
+                .addProperty(pluginPropertySpec)
                 .addFunction(providePluginNameFunc)
+                .addFunction(injectPluginFunc)
+                .addFunction(syncInvokeFunc)
+                .addFunction(asyncInvokeFunc)
                 .build()
 
             val fileSpec = FileSpec.builder(packageName, wrapperClassName)
