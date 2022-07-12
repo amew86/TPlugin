@@ -20,14 +20,14 @@ interface ITPluginWrapper<L> {
      * invoke functions by synchronous way
      */
     @Throws(Exception::class)
-    fun syncInvoke(lifecycle: L?, funName: String, params: Map<String, Any?>?): Map<String, Any?>?
+    fun syncInvoke(lifecycleOwner: L?, funName: String, params: Map<String, Any?>?): Map<String, Any?>?
 
     /**
-     * trunk to invoke plugins functions by asynchronous way
+     * invoke functions by asynchronous way
      */
     fun asyncInvoke(
         lifecycle: L?, funName: String, params: Map<String, Any?>?,
         successCallback: ((Map<String, Any?>?) -> Unit)?,
-        failureCallback: ((Exception) -> Unit)?
+        failureCallback: ((Exception?) -> Unit)?
     )
 }

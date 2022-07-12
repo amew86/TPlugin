@@ -56,7 +56,7 @@ object PluginRouter {
         funName: String,
         params: Map<String, Any?>?,
         successCallback: ((Map<String, Any?>?) -> Unit)?,
-        failureCallback: ((Exception) -> Unit)?
+        failureCallback: ((Exception?) -> Unit)?
     ) {
         plugins[pluginName]?.asyncInvoke(lifecycleOwner, funName, params, successCallback, failureCallback)
     }

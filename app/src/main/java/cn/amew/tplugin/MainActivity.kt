@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 },
                 failureCallback = {
-                    it.printStackTrace()
+                    it?.printStackTrace()
                 }
             )
         }

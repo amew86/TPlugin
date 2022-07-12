@@ -16,7 +16,7 @@ import com.google.auto.service.AutoService
  */
 @TPlugin(pluginName = "sample")
 @AutoService(ITPlugin::class)
-class SamplePlugin: ITPlugin {
+class SamplePlugin : ITPlugin {
 
     @TFunc
     fun syncTest1(params: Map<String, Any?>?): Map<String, Any?> {
@@ -29,7 +29,12 @@ class SamplePlugin: ITPlugin {
     }
 
     @TFunc(funName = "myFunName")
-    fun asyncTest1(lifecycleOwner: LifecycleOwner?, params: Map<String, Any?>?) {
+    fun asyncTest1(
+        lifecycleOwner: LifecycleOwner?,
+        params: Map<String, Any?>?,
+        successCallback: ((Map<String, Any?>) -> Unit)?,
+        failureCallback: ((Exception?) -> Unit)?
+    ) {
         Log.i("test", "asyncTest")
     }
 }
