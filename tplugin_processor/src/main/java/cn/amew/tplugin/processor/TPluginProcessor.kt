@@ -96,7 +96,7 @@ class TPluginProcessor : AbstractProcessor() {
                                 latch.countDown()
                                 throw it ?: Exception("unknown exception")
                             })
-                            ${if (timeout <= 0) "latch.await()" else "latch.await(${timeout}L, java.util.concurrent.TimeUnit.MILLISECONDS)"}
+                            ${if (timeout <= 0) "latch.await()" else "if (latch.await(${timeout}L, java.util.concurrent.TimeUnit.MILLISECONDS)) throw java.util.concurrent.TimeoutException()"}
                             result
                         }
                         
