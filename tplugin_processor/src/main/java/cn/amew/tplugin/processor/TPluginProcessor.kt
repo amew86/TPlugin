@@ -88,15 +88,19 @@ class TPluginProcessor : AbstractProcessor() {
                         """
                         "$funName" -> {
                             var result: Map<String, Any?>?  = null
+                            var requestDone = false
                             val latch = java.util.concurrent.CountDownLatch(1)
                             plugin.${realFun.substringBeforeLast(",successCallback")}, {
                                 result = it
+                                requestDone = true
                                 latch.countDown()
                             }, {
+                                requestDone = true
                                 latch.countDown()
                                 throw it ?: Exception("unknown exception")
                             })
                             ${if (timeout <= 0) "latch.await()" else "latch.await(${timeout}L, java.util.concurrent.TimeUnit.MILLISECONDS)"}
+                            if (!requestDone) throw java.util.concurrent.TimeoutException()
                             result
                         }
                         
