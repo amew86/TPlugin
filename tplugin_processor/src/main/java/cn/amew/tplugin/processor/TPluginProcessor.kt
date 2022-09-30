@@ -11,7 +11,6 @@ import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
-import kotlin.jvm.Throws
 
 /**
  * Author:      A-mew
@@ -30,7 +29,6 @@ class TPluginProcessor : AbstractProcessor() {
         filer = processingEnv?.filer
     }
 
-    // TODO: uncompleted
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
         roundEnv?.getElementsAnnotatedWith(TPlugin::class.java)?.forEach { element ->
             val packageName = "cn.amew.plugin.wrapper"
@@ -262,7 +260,5 @@ class TPluginProcessor : AbstractProcessor() {
 
     override fun getSupportedSourceVersion() = SourceVersion.RELEASE_8
 
-    override fun getSupportedAnnotationTypes() = mutableSetOf(
-        TPlugin::class.java.name
-    )
+    override fun getSupportedAnnotationTypes() = mutableSetOf(TPlugin::class.java.name)
 }

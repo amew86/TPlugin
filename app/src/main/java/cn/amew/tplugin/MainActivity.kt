@@ -68,6 +68,46 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
+        binding.tvSync1.setOnClickListener { view ->
+            runCatching {
+                val result = PluginRouter.syncInvoke(
+                    lifecycleOwner = null,
+                    "sample",
+                    "myFunName",
+                    hashMapOf(
+                        "input" to "test"
+                    )
+                )
+                result?.entries?.forEach { entry ->
+                    Log.i("test", "key: ${entry.key}, value: ${entry.value}")
+                }
+                view.setBackgroundColor(Color.GREEN)
+            }.onFailure {
+                it.printStackTrace()
+                view.setBackgroundColor(Color.RED)
+            }
+        }
+
+        binding.tvSync2.setOnClickListener { view ->
+            runCatching {
+                val result = PluginRouter.syncInvoke(
+                    lifecycleOwner = null,
+                    "sample",
+                    "syncTest1",
+                    hashMapOf(
+                        "input" to "test"
+                    )
+                )
+                result?.entries?.forEach { entry ->
+                    Log.i("test", "key: ${entry.key}, value: ${entry.value}")
+                }
+                view.setBackgroundColor(Color.GREEN)
+            }.onFailure {
+                it.printStackTrace()
+                view.setBackgroundColor(Color.RED)
+            }
+        }
+
         binding.tvSuspend1.setOnClickListener { view ->
             lifecycleScope.launch {
                 flow {
