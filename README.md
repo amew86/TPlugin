@@ -1,5 +1,7 @@
 # TPlugin
 
+[中文说明](./README_CN.md)
+
 An effective way to build connections belong components by one standard.
 
 - light weighted, decoupling components using just two simple annotation.
