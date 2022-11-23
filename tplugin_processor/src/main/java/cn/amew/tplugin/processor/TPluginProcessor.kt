@@ -224,10 +224,11 @@ class TPluginProcessor : AbstractProcessor() {
         functionElement: Element,
         functionAnnotation: TFunc
     ): Triple<String, String, Boolean> {
+//    ): Pair<String, String> {
         val pureFunName = functionElement.simpleName
         val realFunName = functionAnnotation.funName.ifEmpty { pureFunName.toString() }
 
-        // return
+//        // return
         val isAsync = functionElement.asType().toString().substringAfter(")").contains("void")
 
         val functionAppender = StringBuilder().append("$pureFunName(")
@@ -236,7 +237,7 @@ class TPluginProcessor : AbstractProcessor() {
             functionAppender.append("lifecycleOwner,")
         }
         // params
-        if (functionElement.asType().toString().contains("Map")) {
+        if (functionElement.asType().toString().substringBeforeLast(")").contains("Map")) {
             functionAppender.append("params,")
         }
         // successCallback
@@ -256,6 +257,7 @@ class TPluginProcessor : AbstractProcessor() {
             "${functionAppender.substring(0, functionAppender.length - 1)})"
         else "$functionAppender)"
         return Triple(realFunName, finalFun, isAsync)
+//        return Pair(realFunName, finalFun)
     }
 
     override fun getSupportedSourceVersion() = SourceVersion.RELEASE_8

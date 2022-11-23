@@ -55,4 +55,28 @@
         android:textAllCaps="false"
         />
 
+    <Button
+        android:id="@+id/tv_name_override"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NameOverride"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/tv_timeout_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TimeoutTest1"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/tv_timeout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TimeoutTest2"
+        android:textAllCaps="false"
+        />
+
 </LinearLayout>

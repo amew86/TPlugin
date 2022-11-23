@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.tvAsync1.setOnClickListener { view ->
-            PluginRouter.asyncInvoke(null,"sample", "myFunName",
+            PluginRouter.asyncInvoke(null, "sample", "myFunName",
                 hashMapOf(
                     "input" to "test"
                 ),
@@ -159,6 +159,75 @@ class MainActivity : AppCompatActivity() {
                         view.setBackgroundColor(Color.GREEN)
                     }
 
+            }
+        }
+
+        binding.tvNameOverride.setOnClickListener { view ->
+            lifecycleScope.launch {
+                flow {
+                    val result = PluginRouter.syncInvoke(
+                        lifecycleOwner = null,
+                        "sample",
+                        "overrideTestOverride",
+                        null
+                    )
+                    emit(result)
+                }
+                    .flowOn(Dispatchers.IO)
+                    .catch {
+                        it.printStackTrace()
+                        view.setBackgroundColor(Color.RED)
+                    }
+                    .collect {
+                        Log.i("test", it.toString())
+                        view.setBackgroundColor(Color.GREEN)
+                    }
+            }
+        }
+
+        binding.tvTimeout1.setOnClickListener { view ->
+            lifecycleScope.launch {
+                flow {
+                    val result = PluginRouter.syncInvoke(
+                        lifecycleOwner = null,
+                        "sample",
+                        "timeoutTest1",
+                        null
+                    )
+                    emit(result)
+                }
+                    .flowOn(Dispatchers.IO)
+                    .catch {
+                        it.printStackTrace()
+                        view.setBackgroundColor(Color.RED)
+                    }
+                    .collect {
+                        Log.i("test", it.toString())
+                        view.setBackgroundColor(Color.GREEN)
+                    }
+            }
+        }
+
+        binding.tvTimeout2.setOnClickListener { view ->
+            lifecycleScope.launch {
+                flow {
+                    val result = PluginRouter.syncInvoke(
+                        lifecycleOwner = null,
+                        "sample",
+                        "timeoutTest2",
+                        null
+                    )
+                    emit(result)
+                }
+                    .flowOn(Dispatchers.IO)
+                    .catch {
+                        it.printStackTrace()
+                        view.setBackgroundColor(Color.RED)
+                    }
+                    .collect {
+                        Log.i("test", it.toString())
+                        view.setBackgroundColor(Color.GREEN)
+                    }
             }
         }
     }
